@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>云存储</title>
+        <link
+            rel="stylesheet"
+            href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        />
+        <link
+            rel="stylesheet"
+            href="https://s2.ssl.qhres2.com/static/56662140ef7d5d03.css"
+        />
+        <style>
+            :root {
+                --primary: #4285f4;
+                --primary-dark: #3367d6;
+                --secondary: #34a853;
+                --danger: #ea4335;
+                --warning: #fbbc05;
+                --light: #f8f9fa;
+                --dark: #202124;
+                --gray: #5f6368;
+                --light-gray: #e8eaed;
+                --bg: #ffffff;
+                --text: #202124;
+                --card-bg: #ffffff;
+            }
+            .dark {
+                --bg: #202124;
+                --text: #e8eaed;
+                --card-bg: #303134;
+                --light-gray: #3c4043;
+                --gray: #9aa0a6;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                transition: background-color 0.3s, color 0.3s;
+            }
+            body {
+                font-family: "Arial", "Microsoft YaHei", sans-serif;
+                background-color: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                position: relative;
+                overflow-x: hidden;
+            }
+            #particles-js {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+            }
+            .container {
+                position: relative;
+                z-index: 1;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 0;
+                border-bottom: 1px solid var(--light-gray);
+                margin-bottom: 30px;
+            }
+            .logo {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: var(--primary);
+                display: flex;
+                align-items: center;
+            }
+            .logo i {
+                margin-right: 10px;
+            }
+            .nav-links {
+                display: flex;
+                gap: 20px;
+            }
+            .nav-links a {
+                color: var(--text);
+                text-decoration: none;
+                font-size: 1rem;
+                padding: 5px 10px;
+                border-radius: 4px;
+            }
+            .nav-links a:hover {
+                background-color: var(--light-gray);
+            }
+            .auth-buttons {
+                display: flex;
+                gap: 10px;
+            }
+            .btn {
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                border: none;
+                outline: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+            }
+            .btn-primary {
+                background-color: var(--primary);
+                color: white;
+            }
+            .btn-primary:hover {
+                background-color: var(--primary-dark);
+            }
+            .btn-outline {
+                background-color: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+            .btn-outline:hover {
+                background-color: rgba(66, 133, 244, 0.1);
+            }
+            .btn-dark {
+                background-color: var(--dark);
+                color: white;
+            }
+            .btn-dark:hover {
+                background-color: #333;
+            }
+            .theme-toggle {
+                background-color: transparent;
+                border: none;
+                color: var(--text);
+                cursor: pointer;
+                font-size: 1.2rem;
+                padding: 5px;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .theme-toggle:hover {
+                background-color: var(--light-gray);
+            }
+            .main-content {
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+            }
+            .upload-area {
+                border: 2px dashed var(--light-gray);
+                border-radius: 8px;
+                padding: 40px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s;
+                background-color: var(--card-bg);
+            }
+            .upload-area:hover {
+                border-color: var(--primary);
+                background-color: rgba(66, 133, 244, 0.05);
+            }
+            .upload-area.drag-over {
+                border-color: var(--primary);
+                background-color: rgba(66, 133, 244, 0.1);
+            }
+            .upload-area i {
+                font-size: 2.5rem;
+                color: var(--primary);
+                margin-bottom: 15px;
+            }
+            .upload-area h3 {
+                margin-bottom: 10px;
+                font-size: 1.2rem;
+            }
+            .upload-area p {
+                color: var(--gray);
+                font-size: 0.9rem;
+            }
+            .search-bar {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .search-input {
+                flex: 1;
+                padding: 10px 15px;
+                border: 1px solid var(--light-gray);
+                border-radius: 4px;
+                font-size: 0.9rem;
+                background-color: var(--card-bg);
+                color: var(--text);
+            }
+            .search-input:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
+            .filter-select {
+                padding: 10px;
+                border: 1px solid var(--light-gray);
+                border-radius: 4px;
+                background-color: var(--card-bg);
+                color: var(--text);
+            }
+            .files-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            .file-card {
+                background-color: var(--card-bg);
+                border-radius: 8px;
+                padding: 15px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+            .file-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+            .file-icon {
+                width: 60px;
+                height: 60px;
+                margin: 0 auto 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                color: var(--primary);
+            }
+            .file-name {
+                font-weight: bold;
+                margin-bottom: 5px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .file-meta {
+                font-size: 0.8rem;
+                color: var(--gray);
+                display: flex;
+                justify-content: space-between;
+            }
+            .file-actions {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                display: none;
+            }
+            .file-card:hover .file-actions {
+                display: flex;
+                gap: 5px;
+            }
+            .action-btn {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background-color: var(--light-gray);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.7rem;
+                color: var(--text);
+                cursor: pointer;
+            }
+            .action-btn:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+            .tag {
+                display: inline-block;
+                padding: 2px 6px;
+                font-size: 0.7rem;
+                border-radius: 4px;
+                margin-right: 5px;
+                margin-top: 5px;
+                background-color: var(--light-gray);
+            }
+            .tag-document {
+                background-color: #e6f3ff;
+                color: var(--primary-dark);
+            }
+            .tag-image {
+                background-color: #e6f7ed;
+                color: var(--secondary);
+            }
+            .tag-video {
+                background-color: #fff8e6;
+                color: #ff9500;
+            }
+            .tag-audio {
+                background-color: #f5e6ff;
+                color: #8e24aa;
+            }
+            .dark .tag-document {
+                background-color: #1a3c5a;
+            }
+            .dark .tag-image {
+                background-color: #1d3a2c;
+            }
+            .dark .tag-video {
+                background-color: #4a3a1a;
+            }
+            .dark .tag-audio {
+                background-color: #3e1d4a;
+            }
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 100;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s;
+            }
+            .modal.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            .modal-content {
+                background-color: var(--card-bg);
+                border-radius: 8px;
+                width: 90%;
+                max-width: 500px;
+                padding: 20px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+                transform: translateY(20px);
+                transition: transform 0.3s;
+            }
+            .modal.active .modal-content {
+                transform: translateY(0);
+            }
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--light-gray);
+            }
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--gray);
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .form-label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            .form-input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--light-gray);
+                border-radius: 4px;
+                background-color: var(--card-bg);
+                color: var(--text);
+            }
+            .form-input:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
+            .modal-footer {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                margin-top: 20px;
+                padding-top: 10px;
+                border-top: 1px solid var(--light-gray);
+            }
+            .progress-bar {
+                width: 100%;
+                height: 6px;
+                background-color: var(--light-gray);
+                border-radius: 3px;
+                margin-top: 10px;
+                overflow: hidden;
+            }
+            .progress {
+                height: 100%;
+                background-color: var(--primary);
+                width: 0%;
+                transition: width 0.3s;
+            }
+            .footer {
+                text-align: center;
+                padding: 30px 0;
+                margin-top: 50px;
+                border-top: 1px solid var(--light-gray);
+                color: var(--gray);
+                font-size: 0.9rem;
+            }
+            @media (max-width: 768px) {
+                .files-container {
+                    grid-template-columns: repeat(
+                        auto-fill,
+                        minmax(150px, 1fr)
+                    );
+                }
+                header {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+                .nav-links {
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .auth-buttons {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+            @media (max-width: 480px) {
+                .files-container {
+                    grid-template-columns: repeat(
+                        auto-fill,
+                        minmax(120px, 1fr)
+                    );
+                }
+                .upload-area {
+                    padding: 20px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="particles-js"></div>
+        <div class="container">
+            <header>
+                <div class="logo">
+                    <i class="material-icons">cloud</i> <span>简约云存储</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#">首页</a> <a href="#">我的文件</a>
+                    <a href="#">共享文件</a> <a href="#">回收站</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="loginBtn">
+                        <i class="material-icons">login</i> 登录
+                    </button>
+                    <button class="btn btn-primary" id="registerBtn">
+                        <i class="material-icons">person_add</i> 注册
+                    </button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="material-icons" id="themeIcon">dark_mode</i>
+                    </button>
+                </div>
+            </header>
+            <div class="main-content">
+                <div class="upload-area" id="uploadArea">
+                    <i class="material-icons">cloud_upload</i>
+                    <h3>拖拽文件到此处上传</h3>
+                    <p>或点击选择文件</p>
+                    <input
+                        type="file"
+                        id="fileInput"
+                        style="display: none"
+                        multiple
+                    />
+                </div>
+                <div class="search-bar">
+                    <input
+                        type="text"
+                        class="search-input"
+                        placeholder="搜索文件..."
+                        id="searchInput"
+                    />
+                    <select class="filter-select" id="filterSelect">
+                        <option value="all">全部文件</option>
+                        <option value="document">文档</option>
+                        <option value="image">图片</option>
+                        <option value="video">视频</option>
+                        <option value="audio">音频</option>
+                    </select>
+                </div>
+                <div class="files-container" id="filesContainer">
+                    <!-- 文件卡片将通过JS动态生成 -->
+                </div>
+            </div>
+            <div class="footer">以上内容由AI搜集并生成，仅供参考</div>
+        </div>
+        <!-- 登录模态框 -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>用户登录</h2>
+                    <button class="modal-close" id="loginClose">&times;</button>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">用户名</label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            placeholder="请输入用户名"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">密码</label>
+                        <input
+                            type="password"
+                            class="form-input"
+                            placeholder="请输入密码"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <div class="progress-bar">
+                            <div class="progress" id="loginProgress"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-outline"
+                            id="loginCancel"
+                        >
+                            取消
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            登录
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- 注册模态框 -->
+        <div class="modal" id="registerModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>用户注册</h2>
+                    <button class="modal-close" id="registerClose">
+                        &times;
+                    </button>
+                </div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">用户名</label>
+                        <input
+                            type="text"
+                            class="form-input"
+                            placeholder="请输入用户名"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">邮箱</label>
+                        <input
+                            type="email"
+                            class="form-input"
+                            placeholder="请输入邮箱"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">密码</label>
+                        <input
+                            type="password"
+                            class="form-input"
+                            placeholder="请输入密码"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">确认密码</label>
+                        <input
+                            type="password"
+                            class="form-input"
+                            placeholder="请再次输入密码"
+                            required
+                        />
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-outline"
+                            id="registerCancel"
+                        >
+                            取消
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            注册
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const themeToggle = document.getElementById("themeToggle");
+                const themeIcon = document.getElementById("themeIcon");
+                const html = document.documentElement;
+                themeToggle.addEventListener("click", function () {
+                    html.classList.toggle("dark");
+                    const isDark = html.classList.contains("dark");
+                    themeIcon.textContent = isDark ? "light_mode" : "dark_mode";
+                    localStorage.setItem("theme", isDark ? "dark" : "light");
+                });
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "dark") {
+                    html.classList.add("dark");
+                    themeIcon.textContent = "light_mode";
+                }
+                particlesJS("particles-js", {
+                    particles: {
+                        number: {
+                            value: 80,
+                            density: { enable: true, value_area: 800 },
+                        },
+                        color: { value: "#4285f4" },
+                        shape: { type: "circle" },
+                        opacity: { value: 0.5, random: true },
+                        size: { value: 3, random: true },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: "#4285f4",
+                            opacity: 0.4,
+                            width: 1,
+                        },
+                        move: {
+                            enable: true,
+                            speed: 2,
+                            direction: "none",
+                            random: true,
+                            straight: false,
+                            out_mode: "out",
+                        },
+                    },
+                    interactivity: {
+                        detect_on: "canvas",
+                        events: {
+                            onhover: { enable: true, mode: "repulse" },
+                            onclick: { enable: true, mode: "push" },
+                        },
+                    },
+                });
+                const uploadArea = document.getElementById("uploadArea");
+                const fileInput = document.getElementById("fileInput");
+                uploadArea.addEventListener("click", function () {
+                    fileInput.click();
+                });
+                ["dragenter", "dragover", "dragleave", "drop"].forEach(
+                    (eventName) => {
+                        uploadArea.addEventListener(
+                            eventName,
+                            preventDefaults,
+                            false
+                        );
+                    }
+                );
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                ["dragenter", "dragover"].forEach((eventName) => {
+                    uploadArea.addEventListener(eventName, highlight, false);
+                });
+                ["dragleave", "drop"].forEach((eventName) => {
+                    uploadArea.addEventListener(eventName, unhighlight, false);
+                });
+                function highlight() {
+                    uploadArea.classList.add("drag-over");
+                }
+                function unhighlight() {
+                    uploadArea.classList.remove("drag-over");
+                }
+                uploadArea.addEventListener("drop", handleDrop, false);
+                function handleDrop(e) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    handleFiles(files);
+                }
+                fileInput.addEventListener("change", function () {
+                    handleFiles(this.files);
+                });
+                function handleFiles(files) {
+                    [...files].forEach(uploadFile);
+                }
+                function uploadFile(file) {
+                    console.log("上传文件:", file.name);
+                    const progressBar = document.createElement("div");
+                    progressBar.className = "progress-bar";
+                    const progress = document.createElement("div");
+                    progress.className = "progress";
+                    progressBar.appendChild(progress);
+                    uploadArea.appendChild(progressBar);
+                    let progressValue = 0;
+                    const interval = setInterval(() => {
+                        progressValue += Math.random() * 10;
+                        progress.style.width = `${Math.min(
+                            progressValue,
+                            100
+                        )}%`;
+                        if (progressValue >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                progressBar.remove();
+                                addFileToContainer(file);
+                            }, 500);
+                        }
+                    }, 200);
+                }
+                const filesContainer =
+                    document.getElementById("filesContainer");
+                function addFileToContainer(file) {
+                    const fileExt = file.name.split(".").pop().toLowerCase();
+                    const fileType = getFileType(fileExt);
+                    const fileIcon = getFileIcon(fileExt);
+                    const fileSize = formatFileSize(file.size);
+                    const fileCard = document.createElement("div");
+                    fileCard.className = "file-card";
+                    fileCard.innerHTML = `                    <div class="file-icon">                        <i class="material-icons">${fileIcon}</i>                    </div>                    <div class="file-name">${
+                        file.name
+                    }</div>                    <div class="file-meta">                        <span>${fileType}</span>                        <span>${fileSize}</span>                    </div>                    <div class="tag ${getTagClass(
+                        fileExt
+                    )}">${getTagText(
+                        fileExt
+                    )}</div>                    <div class="file-actions">                        <div class="action-btn" title="下载"><i class="material-icons">download</i></div>                        <div class="action-btn" title="分享"><i class="material-icons">share</i></div>                        <div class="action-btn" title="删除"><i class="material-icons">delete</i></div>                    </div>                `;
+                    filesContainer.prepend(fileCard);
+                }
+                function getFileType(ext) {
+                    const types = {
+                        doc: "Word 文档",
+                        docx: "Word 文档",
+                        pdf: "PDF 文档",
+                        txt: "文本文件",
+                        xls: "Excel 表格",
+                        xlsx: "Excel 表格",
+                        ppt: "PowerPoint",
+                        pptx: "PowerPoint",
+                        jpg: "JPEG 图片",
+                        jpeg: "JPEG 图片",
+                        png: "PNG 图片",
+                        gif: "GIF 图片",
+                        mp4: "MP4 视频",
+                        avi: "AVI 视频",
+                        mov: "MOV 视频",
+                        mp3: "MP3 音频",
+                        wav: "WAV 音频",
+                        zip: "ZIP 压缩包",
+                        rar: "RAR 压缩包",
+                    };
+                    return types[ext] || "未知文件";
+                }
+                function getFileIcon(ext) {
+                    const icons = {
+                        doc: "description",
+                        docx: "description",
+                        pdf: "picture_as_pdf",
+                        txt: "text_snippet",
+                        xls: "table_chart",
+                        xlsx: "table_chart",
+                        ppt: "slideshow",
+                        pptx: "slideshow",
+                        jpg: "image",
+                        jpeg: "image",
+                        png: "image",
+                        gif: "image",
+                        mp4: "movie",
+                        avi: "movie",
+                        mov: "movie",
+                        mp3: "music_note",
+                        wav: "music_note",
+                        zip: "folder_zip",
+                        rar: "folder_zip",
+                    };
+                    return icons[ext] || "insert_drive_file";
+                }
+                function getTagClass(ext) {
+                    if (
+                        [
+                            "doc",
+                            "docx",
+                            "pdf",
+                            "txt",
+                            "xls",
+                            "xlsx",
+                            "ppt",
+                            "pptx",
+                        ].includes(ext)
+                    ) {
+                        return "tag-document";
+                    } else if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
+                        return "tag-image";
+                    } else if (["mp4", "avi", "mov"].includes(ext)) {
+                        return "tag-video";
+                    } else if (["mp3", "wav"].includes(ext)) {
+                        return "tag-audio";
+                    } else {
+                        return "";
+                    }
+                }
+                function getTagText(ext) {
+                    if (
+                        [
+                            "doc",
+                            "docx",
+                            "pdf",
+                            "txt",
+                            "xls",
+                            "xlsx",
+                            "ppt",
+                            "pptx",
+                        ].includes(ext)
+                    ) {
+                        return "文档";
+                    } else if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
+                        return "图片";
+                    } else if (["mp4", "avi", "mov"].includes(ext)) {
+                        return "视频";
+                    } else if (["mp3", "wav"].includes(ext)) {
+                        return "音频";
+                    } else {
+                        return "其他";
+                    }
+                }
+                function formatFileSize(bytes) {
+                    if (bytes === 0) return "0 Bytes";
+                    const k = 1024;
+                    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return (
+                        parseFloat((bytes / Math.pow(k, i)).toFixed(2)) +
+                        " " +
+                        sizes[i]
+                    );
+                }
+                const loginBtn = document.getElementById("loginBtn");
+                const registerBtn = document.getElementById("registerBtn");
+                const loginModal = document.getElementById("loginModal");
+                const registerModal = document.getElementById("registerModal");
+                const loginClose = document.getElementById("loginClose");
+                const registerClose = document.getElementById("registerClose");
+                const loginCancel = document.getElementById("loginCancel");
+                const registerCancel =
+                    document.getElementById("registerCancel");
+                loginBtn.addEventListener("click", function () {
+                    loginModal.classList.add("active");
+                });
+                registerBtn.addEventListener("click", function () {
+                    registerModal.classList.add("active");
+                });
+                loginClose.addEventListener("click", function () {
+                    loginModal.classList.remove("active");
+                });
+                registerClose.addEventListener("click", function () {
+                    registerModal.classList.remove("active");
+                });
+                loginCancel.addEventListener("click", function () {
+                    loginModal.classList.remove("active");
+                });
+                registerCancel.addEventListener("click", function () {
+                    registerModal.classList.remove("active");
+                });
+                window.addEventListener("click", function (e) {
+                    if (e.target === loginModal) {
+                        loginModal.classList.remove("active");
+                    }
+                    if (e.target === registerModal) {
+                        registerModal.classList.remove("active");
+                    }
+                });
+                const loginForm = document.getElementById("loginForm");
+                const registerForm = document.getElementById("registerForm");
+                const loginProgress = document.getElementById("loginProgress");
+                loginForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    loginProgress.style.width = "0%";
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 20;
+                        loginProgress.style.width = `${Math.min(
+                            progress,
+                            100
+                        )}%`;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                loginModal.classList.remove("active");
+                                alert("登录成功!");
+                            }, 500);
+                        }
+                    }, 200);
+                });
+                registerForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    registerModal.classList.remove("active");
+                    setTimeout(() => {
+                        alert("注册成功!");
+                    }, 500);
+                });
+                const searchInput = document.getElementById("searchInput");
+                const filterSelect = document.getElementById("filterSelect");
+                searchInput.addEventListener("input", filterFiles);
+                filterSelect.addEventListener("change", filterFiles);
+                function filterFiles() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const filterValue = filterSelect.value;
+                    const fileCards = document.querySelectorAll(".file-card");
+                    fileCards.forEach((card) => {
+                        const fileName = card
+                            .querySelector(".file-name")
+                            .textContent.toLowerCase();
+                        const fileTag = card.querySelector(".tag").className;
+                        const matchesSearch = fileName.includes(searchTerm);
+                        let matchesFilter = true;
+                        if (filterValue !== "all") {
+                            const expectedClass = `tag-${filterValue}`;
+                            matchesFilter = fileTag.includes(expectedClass);
+                        }
+                        card.style.display =
+                            matchesSearch && matchesFilter ? "block" : "none";
+                    });
+                }
+                const sampleFiles = [
+                    { name: "项目报告.pdf", size: 2456789, ext: "pdf" },
+                    { name: "演示文稿.pptx", size: 5678901, ext: "pptx" },
+                    { name: "风景照片.jpg", size: 1234567, ext: "jpg" },
+                    { name: "产品介绍.mp4", size: 23456789, ext: "mp4" },
+                    { name: "会议记录.docx", size: 345678, ext: "docx" },
+                    { name: "背景音乐.mp3", size: 4567890, ext: "mp3" },
+                    { name: "数据表格.xlsx", size: 789012, ext: "xlsx" },
+                    { name: "设计稿.png", size: 3456789, ext: "png" },
+                ];
+                sampleFiles.forEach((file) => {
+                    const mockFile = {
+                        name: file.name,
+                        size: file.size,
+                        ext: file.ext,
+                    };
+                    addFileToContainer(mockFile);
+                });
+            });
+        </script>
+    </body>
+</html>
+<!-- 以上内容由AI搜集并生成，仅供参考 -->
